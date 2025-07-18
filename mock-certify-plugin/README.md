@@ -5,7 +5,7 @@ The Mock Certify Plugin is a combination implementation of three plugins.
 1. MockVCIssuancePlugin - A Mock-IDA plugin exposes a mock VC(unverifiable) based on the MOCK-IDA Stack, it's implemented to be closer to the MOSIP-IDA stack and is mostly for development & testing purposes. It returns a VC in a JSON-LD format.
 2. MockCSVDataProviderPlugin - A CSV plugin which exposes data based on some valid claims, it is a small plugin which enables teams to get a headstart for generating VC credentials of any type. It returns the user data, which can be used by the Issuer to generate a VC.
 3. MDocMockVCIssuancePlugin - A Mock-Driving license plugin which returns a Mock "Mobile Driving License"(mDL) with some hardcoded data, it returns the VC in an [mDoc format](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-13.html#name-iso-mdl).
-
+4. MockMDocDataProviderPlugin - A mock data provider plugin that returns claim data formatted for mDL issuance. It injects metadata such as `_issuedAt`, `_validUntil`, `_issuer`, and `_docType`. Works in tandem with `MDocMockVCIssuancePlugin`.
 
 ## Configuration Options
 
@@ -115,3 +115,20 @@ mosip.certify.mock.data-provider.csv.identifier-column=
 mosip.certify.mock.data-provider.csv.data-columns=
 ```
 
+### MockMDocDataProviderPlugin
+
+To use this plugin set the below properties
+
+```properties
+mosip.certify.integration.data-provider-plugin=MockMDocDataProviderPlugin
+mosip.certify.mock.data-provider.mdoc.issuer-id=https://example-issuer.org
+mosip.certify.mock.data-provider.mdoc.default-doctype=org.iso.18013.5.1.mDL
+mosip.certify.mock.data-provider.mdoc.validity-days=365
+```
+
+This plugin automatically constructs mock claim data based on incoming `identityDetails`, populates metadata such as:
+
+* `_issuer` – The Issuer ID (`issuer-id`)
+* `_docType` – Document Type (`default-doctype`)
+* `_issuedAt` – Current UTC Timestamp
+* `_validUntil` – UTC Timestamp + `validity-days`
